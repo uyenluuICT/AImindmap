@@ -3,209 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thử Thách KTS AI - Bản Thu Gọn</title>
+    <title>Thử Thách KTS AI - Fix Layout</title>
     <style>
         :root {
             --primary: #ff6f00;
             --bg: #e3f2fd;
-            --card-w: 140px;
-            --card-h: 50px;
+            --card-w: 145px;
+            --card-h: 45px;
         }
 
         * { box-sizing: border-box; touch-action: none; }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             background-color: var(--bg);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden; /* Tuyệt đối không cuộn */
-            display: flex;
-            flex-direction: column;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* HEADER */
         header {
-            height: 8vh;
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: 7vh; background: white;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             z-index: 10;
         }
 
-        .title { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .title { color: var(--primary); font-weight: bold; font-size: 1.1rem; }
         .score-board { background: #ffecb3; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
 
-        /* VÙNG CHƠI CHÍNH */
+        /* VÙNG CHƠI CHÍNH - DÙNG GRID 3x3 */
         #main-game {
             flex: 1;
-            position: relative;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* SƠ ĐỒ TƯ DUY */
-        .mindmap-wrapper {
-            position: relative;
-            width: 90%;
-            height: 90%;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 15px;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
+        /* CHỦ ĐỀ CHÍNH Ở GIỮA */
         .center-node {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 160px;
-            height: 160px;
+            grid-column: 2;
+            grid-row: 2;
             background: radial-gradient(circle, #ff9800, #e65100);
             color: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            border: 5px solid white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; font-weight: bold; font-size: 0.85rem;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            width: 140px; height: 140px;
+            justify-self: center; align-self: center;
             z-index: 5;
         }
 
+        /* CÁC NHÁNH CHÍNH */
         .branch {
-            background: rgba(255, 255, 255, 0.7);
-            border: 3px dashed #90caf9;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px dashed #90caf9;
             border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            transition: all 0.3s;
-            overflow: hidden;
+            display: flex; flex-direction: column;
+            padding: 8px;
+            transition: 0.3s;
+            min-height: 120px;
         }
 
-        .branch.drag-over {
-            background: #fff9c4;
-            transform: scale(1.02);
-            border-style: solid;
-        }
+        .branch.drag-over { background: #fff9c4; border-style: solid; transform: scale(1.02); }
 
         .branch-title {
-            font-size: 0.9rem;
-            font-weight: bold;
-            padding: 3px 10px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 0.9rem; font-weight: bold;
+            text-align: center; margin-bottom: 5px;
+            padding: 2px; border-bottom: 1px solid #eee;
         }
 
         .drop-zone {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            justify-content: center;
-            align-content: flex-start;
+            flex: 1; display: flex; flex-wrap: wrap;
+            gap: 4px; justify-content: center; align-content: flex-start;
         }
+
+        /* ĐỊNH VỊ CỤ THỂ TỪNG NHÁNH */
+        .b1 { grid-column: 1; grid-row: 1; border-color: #2196f3; }
+        .b2 { grid-column: 2; grid-row: 1; border-color: #ff9800; }
+        .b3 { grid-column: 3; grid-row: 1; border-color: #e91e63; }
+        .b5 { grid-column: 1; grid-row: 2; border-color: #4caf50; }
+        .b4 { grid-column: 3; grid-row: 2; border-color: #9c27b0; }
+        .b6 { grid-column: 2; grid-row: 3; border-color: #f44336; }
 
         /* KHO TỪ KHÓA */
         #keyword-dock {
-            height: 28vh;
+            height: 25vh;
             background: #bbdefb;
             border-top: 4px solid #64b5f6;
             padding: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            overflow-y: auto; /* Chỉ cho phép cuộn bên trong kho thẻ nếu quá nhiều */
+            display: flex; flex-wrap: wrap;
+            justify-content: center; gap: 8px;
+            overflow-y: auto;
         }
 
         .card {
-            width: var(--card-w);
-            height: var(--card-h);
-            background: white;
-            border: 2px solid #1565c0;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: grab;
-            box-shadow: 0 3px 0 #1565c0;
-            transition: 0.2s;
-            padding: 5px;
+            width: var(--card-w); height: var(--card-h);
+            background: white; border: 2px solid #1565c0;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; font-size: 0.85rem; font-weight: 600;
+            cursor: grab; box-shadow: 0 3px 0 #1565c0;
+            padding: 4px;
         }
 
-        .card:active { transform: translateY(3px); box-shadow: none; }
+        .card.selected { background: #fff59d; border-color: #fbc02d; }
         
         .card.placed {
-            width: auto;
-            height: auto;
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            background: #e8f5e9;
-            border-color: #4caf50;
-            box-shadow: none;
-            cursor: default;
+            width: auto; height: auto;
+            padding: 3px 8px; font-size: 0.75rem;
+            background: #e8f5e9; border-color: #4caf50;
+            box-shadow: none; cursor: default;
         }
 
-        .card.selected {
-            background: #fff59d;
-            border-color: #fbc02d;
-            transform: scale(1.1);
-        }
-
-        /* THÔNG BÁO */
         #toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 30px;
-            display: none;
-            z-index: 100;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85); color: white;
+            padding: 15px 30px; border-radius: 30px; display: none; z-index: 100;
         }
 
-        /* CHIẾN THẮNG */
         #win-screen {
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.95);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: fixed; inset: 0; background: rgba(255,255,255,0.95);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
             z-index: 200;
-            text-align: center;
         }
 
-        /* MÀU SẮC NHÁNH */
-        .b-learning { border-color: #2196f3; }
-        .b-traffic { border-color: #ff9800; }
-        .b-health { border-color: #e91e63; }
-        .b-fun { border-color: #9c27b0; }
-        .b-plus { border-color: #4caf50; }
-        .b-minus { border-color: #f44336; }
-
+        button { padding: 10px 25px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -213,56 +144,54 @@
 <header>
     <div class="title">🤖 KTS SƠ ĐỒ TƯ DUY AI</div>
     <div class="score-board">Đã xếp: <span id="count">0</span>/18</div>
-    <button onclick="location.reload()" style="padding: 5px 10px; cursor: pointer;">Làm lại</button>
+    <button onclick="location.reload()" style="background: #eee;">Làm lại</button>
 </header>
 
 <div id="main-game">
-    <div class="center-node">CHỦ ĐỀ CHÍNH:<br>TRÍ TUỆ NHÂN TẠO (AI)</div>
+    <!-- Hàng 1 -->
+    <div class="branch b1" data-cat="hoc-tap">
+        <div class="branch-title" style="color:#1976d2">1. Học tập</div>
+        <div class="drop-zone"></div>
+    </div>
+    <div class="branch b2" data-cat="giao-thong">
+        <div class="branch-title" style="color:#ef6c00">2. Giao thông</div>
+        <div class="drop-zone"></div>
+    </div>
+    <div class="branch b3" data-cat="y-te">
+        <div class="branch-title" style="color:#c2185b">3. Y tế</div>
+        <div class="drop-zone"></div>
+    </div>
+
+    <!-- Hàng 2 -->
+    <div class="branch b5" data-cat="loi-ich">
+        <div class="branch-title" style="color:#388e3c">5. Lợi ích</div>
+        <div class="drop-zone"></div>
+    </div>
     
-    <div class="mindmap-wrapper">
-        <!-- Nhánh 1: Học tập -->
-        <div class="branch b-learning" data-cat="hoc-tap">
-            <div class="branch-title">1. Học tập</div>
-            <div class="drop-zone"></div>
-        </div>
-        <!-- Nhánh 2: Giao thông -->
-        <div class="branch b-traffic" data-cat="giao-thong">
-            <div class="branch-title">2. Giao thông</div>
-            <div class="drop-zone"></div>
-        </div>
-        <!-- Nhánh 3: Y tế -->
-        <div class="branch b-health" data-cat="y-te">
-            <div class="branch-title">3. Y tế</div>
-            <div class="drop-zone"></div>
-        </div>
-        <!-- Nhánh 4: Lợi ích -->
-        <div class="branch b-plus" data-cat="loi-ich">
-            <div class="branch-title">5. Lợi ích</div>
-            <div class="drop-zone"></div>
-        </div>
-        <!-- Nhánh 5: Hạn chế -->
-        <div class="branch b-minus" data-cat="han-che">
-            <div class="branch-title">6. Hạn chế</div>
-            <div class="drop-zone"></div>
-        </div>
-        <!-- Nhánh 6: Giải trí -->
-        <div class="branch b-fun" data-cat="giai-tri">
-            <div class="branch-title">4. Giải trí</div>
-            <div class="drop-zone"></div>
-        </div>
+    <div class="center-node">
+        CHỦ ĐỀ CHÍNH:<br>TRÍ TUỆ NHÂN TẠO (AI)
+    </div>
+
+    <div class="branch b4" data-cat="giai-tri">
+        <div class="branch-title" style="color:#7b1fa2">4. Giải trí</div>
+        <div class="drop-zone"></div>
+    </div>
+
+    <!-- Hàng 3 (Nhánh 6 nằm ở giữa hàng 3) -->
+    <div class="branch b6" data-cat="han-che">
+        <div class="branch-title" style="color:#d32f2f">6. Hạn chế</div>
+        <div class="drop-zone"></div>
     </div>
 </div>
 
-<div id="keyword-dock">
-    <!-- Thẻ từ khóa sinh ra ở đây -->
-</div>
+<div id="keyword-dock"></div>
 
-<div id="toast">Ôi, sai rồi! Thử lại nhé!</div>
+<div id="toast"></div>
 
 <div id="win-screen">
-    <h1 style="font-size: 3rem; color: #4caf50;">XUẤT SẮC! 🎉</h1>
-    <p style="font-size: 1.2rem;">Em đã hoàn thành Sơ đồ tư duy AI rất gọn gàng!</p>
-    <button onclick="location.reload()" style="padding: 15px 40px; font-size: 1.2rem; background: #ff9800; border: none; color: white; border-radius: 30px; cursor: pointer;">CHƠI LẠI</button>
+    <h1 style="color: #4caf50;">XUẤT SẮC! 🎉</h1>
+    <p>Em đã hoàn thành Sơ đồ tư duy AI rất gọn gàng!</p>
+    <button onclick="location.reload()" style="background: #ff9800; color: white;">CHƠI LẠI</button>
 </div>
 
 <script>
@@ -296,25 +225,14 @@
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 1500);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
 
     function init() {
         const dock = document.getElementById('keyword-dock');
-        const shuffled = [...data].sort(() => Math.random() - 0.5);
-
-        shuffled.forEach(item => {
+        [...data].sort(() => Math.random() - 0.5).forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
             card.textContent = item.text;
@@ -322,43 +240,33 @@
             card.draggable = true;
             card.dataset.cat = item.cat;
 
-            // Sự kiện Drag
             card.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('text', card.id);
                 card.classList.add('selected');
             });
             card.addEventListener('dragend', () => card.classList.remove('selected'));
-
-            // Sự kiện Click (Cho UX thân thiện hơn)
             card.addEventListener('click', () => {
                 if (selectedEffort) selectedEffort.classList.remove('selected');
                 selectedEffort = card;
                 card.classList.add('selected');
             });
-
             dock.appendChild(card);
         });
 
-        // Thiết lập các nhánh
         document.querySelectorAll('.branch').forEach(branch => {
             branch.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 branch.classList.add('drag-over');
             });
-
             branch.addEventListener('dragleave', () => branch.classList.remove('drag-over'));
-
             branch.addEventListener('drop', (e) => {
                 e.preventDefault();
                 branch.classList.remove('drag-over');
-                const cardId = e.dataTransfer.getData('text');
-                validatePlacement(document.getElementById(cardId), branch);
+                validate(document.getElementById(e.dataTransfer.getData('text')), branch);
             });
-
-            // Click vào nhánh để thả thẻ đã chọn
             branch.addEventListener('click', () => {
                 if (selectedEffort) {
-                    validatePlacement(selectedEffort, branch);
+                    validate(selectedEffort, branch);
                     selectedEffort.classList.remove('selected');
                     selectedEffort = null;
                 }
@@ -366,11 +274,10 @@
         });
     }
 
-    function validatePlacement(card, branch) {
-        if (!card) return;
+    function validate(card, branch) {
+        if (!card || card.classList.contains('placed')) return;
         if (card.dataset.cat === branch.dataset.cat) {
-            const zone = branch.querySelector('.drop-zone');
-            zone.appendChild(card);
+            branch.querySelector('.drop-zone').appendChild(card);
             card.classList.add('placed');
             card.draggable = false;
             score++;
@@ -378,23 +285,15 @@
             playNote(800, 'sine', 0.1);
             if (score === 18) document.getElementById('win-screen').style.display = 'flex';
         } else {
-            playNote(200, 'square', 0.2);
-            showToast("Sai rồi, em hãy chọn lại nhé!");
-            branch.style.animation = "shake 0.3s";
-            setTimeout(() => branch.style.animation = "", 300);
+            playNote(150, 'square', 0.2);
+            const t = document.getElementById('toast');
+            t.textContent = "Chưa đúng rồi, hãy thử lại!";
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 1200);
         }
     }
 
     init();
 </script>
-
-<style>
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-</style>
-
 </body>
 </html>

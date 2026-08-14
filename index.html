@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thử Thách: KTS Sơ Đồ Tư Duy AI</title>
+    <style>
+        :root {
+            --primary-bg: #e0f7fa;
+            --main-theme-color: #ff6f00;
+            --branch-color: #ffffff;
+            --text-color: #2c3e50;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Tiêu đề và Hướng dẫn */
+        header {
+            text-align: center;
+            padding: 20px;
+            background: #fff;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--main-theme-color);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--main-theme-color);
+            font-size: 2.2rem;
+            text-transform: uppercase;
+        }
+
+        .instruction {
+            font-size: 1.2rem;
+            margin-top: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* Sơ đồ tư duy */
+        #mindmap-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 30px;
+            max-width: 1100px;
+            width: 100%;
+            position: relative;
+        }
+
+        .main-theme {
+            grid-column: 2;
+            grid-row: 2;
+            background: var(--main-theme-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            aspect-ratio: 1 / 1;
+            box-shadow: 0 0 20px rgba(255, 111, 0, 0.4);
+            border: 5px solid #fff;
+            z-index: 2;
+        }
+
+        .branch {
+            background: var(--branch-color);
+            border: 3px solid #ccc;
+            border-radius: 15px;
+            padding: 10px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .branch.highlight {
+            border-color: var(--success-color);
+            background-color: #e8f5e9;
+            transform: scale(1.05);
+        }
+
+        .branch-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: #eee;
+        }
+
+        /* Màu sắc riêng cho từng nhánh */
+        .branch[data-cat="learning"] { border-color: #2196f3; }
+        .branch[data-cat="traffic"] { border-color: #ff9800; }
+        .branch[data-cat="health"] { border-color: #e91e63; }
+        .branch[data-cat="entertainment"] { border-color: #9c27b0; }
+        .branch[data-cat="benefits"] { border-color: #4caf50; }
+        .branch[data-cat="limitations"] { border-color: #f44336; }
+
+        .drop-zone {
+            width: 100%;
+            min-height: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Kho thẻ từ khóa */
+        #keyword-pool {
+            background: #fff;
+            border: 4px dashed var(--main-theme-color);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px;
+            max-width: 1000px;
+            width: 90%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            min-height: 100px;
+        }
+
+        .keyword-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-size: 1.1rem;
+            cursor: grab;
+            box-shadow: 4px 4px 0px #333;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background-color: #fffde7;
+        }
+
+        .keyword-card:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .keyword-card.placed {
+            cursor: default;
+            box-shadow: none;
+            background-color: #c8e6c9;
+            border-color: #2e7d32;
+            font-size: 0.95rem;
+            padding: 5px 10px;
+        }
+
+        /* Nút chức năng */
+        .controls {
+            margin-bottom: 50px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: var(--main-theme-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Hiệu ứng chiến thắng */
+        #win-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: white;
+            text-align: center;
+        }
+
+        .win-content h2 {
+            font-size: 3rem;
+            color: #ffeb3b;
+            margin-bottom: 10px;
+        }
+
+        /* Gợi ý khi sai */
+        #hint-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ffecb3;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #ffa000;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #mindmap-container {
+                grid-template-columns: 1fr;
+            }
+            .main-theme {
+                grid-row: 1;
+                grid-column: 1;
+                aspect-ratio: auto;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Thử Thách: KTS Sơ Đồ Tư Duy AI</h1>
+    <p class="instruction">Em hãy kéo các <b>Từ khóa</b> vào đúng <b>Nhánh chính</b> nhé!</p>
+</header>
+
+<div id="mindmap-container">
+    <!-- Cột trái -->
+    <div class="branch" data-cat="learning">
+        <div class="branch-title">1. Học tập</div>
+        <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="branch" data-cat="benefits">
+        <div class="branch-title">5. Lợi ích</div>
+        <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    
+    <!-- Cột giữa -->
+    <div class="main-theme">
+        CHỦ ĐỀ CHÍNH:<br>TRÍ TUỆ NHÂN TẠO (AI)
+    </div>
+    
+    <!-- Cột phải -->
+    <div class="branch" data-cat="traffic">
+        <div class="branch-title">2. Giao thông</div>
+        <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="branch" data-cat="health">
+        <div class="branch-title">3. Y tế</div>
+        <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="branch" data-cat="entertainment">
+        <div class="branch-title">4. Giải trí</div>
+        <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="branch" data-cat="limitations">
+        <div class="branch-title">6. Hạn chế</div>
+        <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+</div>
+
+<div id="keyword-pool">
+    <!-- Các thẻ từ khóa sẽ được JS tự động tạo ở đây -->
+</div>
+
+<div class="controls">
+    <button onclick="resetGame()">Làm lại từ đầu</button>
+</div>
+
+<div id="hint-box"></div>
+
+<div id="win-overlay">
+    <div class="win-content">
+        <h2>TUYỆT VỜI! 🥳</h2>
+        <p style="font-size: 1.5rem;">Chúc mừng em đã hoàn thành Sơ đồ tư duy AI!</p>
+        <button onclick="resetGame()" style="margin-top: 20px; background: #4caf50;">Chơi lại lần nữa</button>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu từ khóa (Nhánh phụ)
+    const keywordData = [
+        { id: 1, text: "Giải bài tập", cat: "learning" },
+        { id: 2, text: "Dịch ngôn ngữ", cat: "learning" },
+        { id: 3, text: "Gợi ý tài liệu", cat: "learning" },
+        { id: 4, text: "Xe tự lái", cat: "traffic" },
+        { id: 5, text: "Bản đồ chỉ đường", cat: "traffic" },
+        { id: 6, text: "Phân luồng giao thông", cat: "traffic" },
+        { id: 7, text: "Chẩn đoán bệnh", cat: "health" },
+        { id: 8, text: "Rô-bốt phẫu thuật", cat: "health" },
+        { id: 9, text: "Nhắc lịch uống thuốc", cat: "health" },
+        { id: 10, text: "Gợi ý bài hát", cat: "entertainment" },
+        { id: 11, text: "Trò chơi thông minh", cat: "entertainment" },
+        { id: 12, text: "Tạo ảnh hoạt hình", cat: "entertainment" },
+        { id: 13, text: "Xử lý nhanh", cat: "benefits" },
+        { id: 14, text: "Tiết kiệm thời gian", cat: "benefits" },
+        { id: 15, text: "Làm việc 24/7", cat: "benefits" },
+        { id: 16, text: "Phụ thuộc vào máy", cat: "limitations" },
+        { id: 17, text: "Có thể đưa tin sai", cat: "limitations" },
+        { id: 18, text: "Thiếu cảm xúc", cat: "limitations" }
+    ];
+
+    let correctCount = 0;
+    const totalKeywords = keywordData.length;
+
+    // Web Audio API: Tạo âm thanh mà không cần file MP3
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        } else {
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // Khởi tạo trò chơi
+    function initGame() {
+        correctCount = 0;
+        const pool = document.getElementById('keyword-pool');
+        pool.innerHTML = '';
+        
+        // Trộn ngẫu nhiên thẻ
+        const shuffled = [...keywordData].sort(() => Math.random() - 0.5);
+        
+        shuffled.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'keyword-card';
+            card.textContent = item.text;
+            card.draggable = true;
+            card.id = `card-${item.id}`;
+            card.dataset.cat = item.cat;
+            card.addEventListener('dragstart', dragStart);
+            pool.appendChild(card);
+        });
+
+        // Xóa các vùng thả cũ
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.innerHTML = '';
+            zone.parentElement.classList.remove('highlight');
+        });
+
+        document.getElementById('win-overlay').style.display = 'none';
+    }
+
+    // Logic kéo thả
+    function dragStart(e) {
+        e.dataTransfer.setData("text/plain", e.target.id);
+    }
+
+    function allowDrop(e) {
+        e.preventDefault();
+    }
+
+    function drop(e) {
+        e.preventDefault();
+        const cardId = e.dataTransfer.getData("text/plain");
+        const card = document.getElementById(cardId);
+        const dropZone = e.target.closest('.drop-zone');
+        const branch = dropZone.parentElement;
+        
+        if (!dropZone) return;
+
+        const cardCat = card.dataset.cat;
+        const branchCat = branch.dataset.cat;
+
+        if (cardCat === branchCat) {
+            // ĐÚNG
+            playSound('correct');
+            dropZone.appendChild(card);
+            card.draggable = false;
+            card.classList.add('placed');
+            branch.classList.add('highlight');
+            correctCount++;
+            
+            if (correctCount === totalKeywords) {
+                setTimeout(showWinMessage, 500);
+            }
+        } else {
+            // SAI
+            playSound('wrong');
+            showHint("Ôi, chưa đúng rồi! Em hãy suy nghĩ lại nhé.");
+            // Thẻ tự bật nảy về (không cần code thêm vì nó không được append)
+        }
+    }
+
+    function showHint(msg) {
+        const hintBox = document.getElementById('hint-box');
+        hintBox.textContent = msg;
+        hintBox.style.display = 'block';
+        setTimeout(() => {
+            hintBox.style.display = 'none';
+        }, 2500);
+    }
+
+    function showWinMessage() {
+        document.getElementById('win-overlay').style.display = 'flex';
+        // Hiệu ứng "pháo hoa" đơn giản bằng console hoặc có thể thêm CSS
+        console.log("Chúc mừng! Bạn đã thắng!");
+    }
+
+    function resetGame() {
+        initGame();
+    }
+
+    // Bắt đầu game khi tải trang
+    window.onload = initGame;
+</script>
+
+</body>
+</html>
